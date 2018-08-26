@@ -20,7 +20,7 @@
 </form>
 
 <div class="upload">
-  <form class="upload-form upload-image" id="upload-select-image" method="post" enctype="multipart/form-data">
+  <form class="upload-form upload-image" action="https://js.dump.academy/kekstagram" id="upload-select-image" method="post" enctype="multipart/form-data">
     <input type="file" id="upload-file" class="upload-input" name="filename" required>
     <label class="upload-file upload-control" for="upload-file"></label>
     <button class="upload-submit upload-control" type="submit"></button>
@@ -107,7 +107,7 @@
 
 
 <div class="gallery-overlay invisible">
-  <span class="gallery-overlay-close">&times;</span>
+  <span class="gallery-overlay-close" tabindex="0">&times;</span>
   <div class="gallery-overlay-preview">
     <img src="" class="gallery-overlay-image" alt="">
     <div class="gallery-overlay-controls">
@@ -127,9 +127,8 @@
   </a>
 </template>
 
-
-<script src="js/resizer.js" charset="utf-8"></script>
-<script src="js/upload.js" charset="utf-8"></script>
+<!-- <script src="js/resizer.js" charset="utf-8"></script>
+<script src="js/upload.js" charset="utf-8"></script> -->
 <script src="js/pictures.js" charset="utf-8"></script>
 
 </body>

@@ -6,6 +6,11 @@ var likes = [];
 var comments = [];
 var numberOfObjects = 25;
 
+//Находим блок галери-оверлей
+var galleryOverlay = document.querySelector('.gallery-overlay');
+//находим кнопку закрытия
+var galleryCloseButton = galleryOverlay.querySelector('.gallery-overlay-close');
+
 
 //функция для поиска случайного номера элемента из переданного массива
 function getRandom(arr) {
@@ -47,7 +52,7 @@ function generateComment(comments) {
 
 //генерация 25 объектов с данными
 for (var i = 1; i < numberOfObjects; i++) {
-  url[i] = 'photos/{{' + i + '}}.jpg';
+  url[i] = 'photos/' + i + '.jpg';
   likes[i] = getRandomLikes();
   comments[i] = generateComment(userComments);
 }
@@ -65,7 +70,7 @@ function generateCard(dataArray, i) {
   var userCard = pictureTemplate.cloneNode(true);
   userCard.querySelector('.picture').getElementsByTagName('img')[0].src = dataArray[0][i];
   userCard.querySelector('.picture-likes').textContent = dataArray[1][i];
-    userCard.querySelector('.picture-comments').textContent = dataArray[2].length;
+  userCard.querySelector('.picture-comments').textContent = getRandom(dataArray[2]);
   return userCard;
 }
 
@@ -73,17 +78,58 @@ function generateCard(dataArray, i) {
 var fragment = document.createDocumentFragment();
 for (var i = 1; i < numberOfObjects; i++) {
   fragment.appendChild(generateCard(userData, i));
-
 };
 
 //добавляем фрагмент в разметку страницы
 pictures.appendChild(fragment);
 
-//Находим блок галери-оверлей
-var galleryOverlay = document.querySelector('.gallery-overlay');
-//показываем его
-galleryOverlay.classList.remove('invisible');
+// функция открытия большого изображения
+var openBigImage = function(event) {
+  event.preventDefault();
 
-galleryOverlay.querySelector('.gallery-overlay-image').src = pictures.querySelector('.picture').getElementsByTagName('img')[0].src
-galleryOverlay.querySelector('.likes-count').textContent = pictures.querySelector('.picture-likes').textContent;
-galleryOverlay.querySelector('.comments-count').textContent = pictures.querySelector('.picture-comments').textContent;
+  var target = event.target;
+  // console.log(target.getElementsByTagName('img')[0]);
+
+  //выключение случайных нажатий мимо картинок
+  if (target.tagName !== 'IMG' && target.tagName !== 'A') return
+
+  //цикл, чтобы поймать всплытие именно на ссылке, а не на вложенных элементах
+   while (target.tagName !== 'DIV') {
+    if (target.tagName == 'A') {
+      break;
+    }
+    target = target.parentNode;
+  }
+
+  galleryOverlay.classList.remove('invisible');
+  galleryOverlay.querySelector('.gallery-overlay-image').src = target.getElementsByTagName('img')[0].src;
+  galleryOverlay.querySelector('.likes-count').textContent = target.querySelector('.picture-likes').textContent;
+  galleryOverlay.querySelector('.comments-count').textContent = target.querySelector('.picture-comments').textContent;
+
+  document.addEventListener('keydown', closeBigImageEsc);
+}
+
+// функция закрытия по крестику
+var closeBigImage = function() {
+  galleryOverlay.classList.add('invisible');
+  document.removeEventListener('keydown', closeBigImageEsc);
+}
+
+var closeBigImageEsc = function(event) {
+  if (event.keyCode === 27) {
+      closeBigImage();
+  }
+}
+
+var closeBigImageEnter = function(event) {
+  if (event.keyCode === 13) {
+      closeBigImage();
+  }
+}
+
+//вешаем обработчик на родительский элемент
+pictures.addEventListener('click', openBigImage);
+
+//обработчик на кнопку закрытия
+galleryCloseButton.addEventListener('click', closeBigImage);
+galleryCloseButton.addEventListener('keydown', closeBigImageEnter);
